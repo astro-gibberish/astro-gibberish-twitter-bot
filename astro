@@ -1,0 +1,76 @@
+#!/usr/bin/env ruby
+# This is a script that simply gets a random bit of information about astronomy
+# There are a few args you can pass from cmd line:
+#   - "pretty" > if you use pretty, you'll get text. By default you'll get the json
+#   - Any other args you pass in will be used as a tag.
+#     - Multiple tags are an "AND" search, not "OR".
+# Unirest is used for http requests: http://unirest.io/ruby.html
+# Astrocast is used for the information: http://astrocast.org/index.php
+# -micah
+
+require 'unirest'
+require 'marky_markov'
+require 'xmlsimple'
+
+PRETTY = true if ARGV.include? 'pretty' || PRETTY = false
+TAGS = (ARGV.delete_if{|i|i=='pretty'}).join(",")
+GIBB = true if ARGV.include? 'gibberish' || GIBB = false
+
+def gibberish(dict_depth: 2, num_sentences: 3)
+  text = ""
+  bites = n_bites()
+  samples = pad_markov_chain()
+  bites.each do |b|
+    text += b["name"] + '. '
+  end
+  samples.each do |q|
+    text += q["text"] + '. '
+  end
+  markov = MarkyMarkov::TemporaryDictionary.new(dict_depth)
+  markov.parse_string(text)
+  return  markov.generate_n_sentences num_sentences
+end
+
+def pad_markov_chain()
+  # Some sentences to pad the markov chain dictionary with
+  samples = [] 
+  wired_categories = ["gear", "science", "business", "design", "underwire", 
+                      "reviews", "science-blogs", "threatlevel", "culture", 
+                      "transportation"]
+  wired_categories.each do |cat|
+    XmlSimple.xml_in(
+      Unirest.get( "http://www.wired.com/category/#{cat}/feed/").body
+    )["channel"][0]["item"].each do |item|
+      item["title"].each do |title|
+        samples.push({"text" => title})
+      end
+    end
+  end
+  samples += Unirest.get(
+    "https://raw.githubusercontent.com/fortrabbit/quotes/master/quotes.json"
+  ).body
+  return samples
+end
+
+def rand_bite(tags)
+  tags_query = "?tags=#{tags}" unless tags == nil
+  bite = Unirest.get("http://astrocast.herokuapp.com/bites#{tags_query}").body
+  return bite[rand(bite.length)] || {"name" => "No matching objects found!", 
+                                     "tags" => tags.split(',')}
+end
+
+def n_bites()
+  bites = Unirest.get("http://astrocast.herokuapp.com/bites").body
+  return bites
+end
+
+unless defined?(GIBB) then
+  if defined?(PRETTY)
+    text = rand_bite(TAGS)
+    puts "#{text['name']}\n\nTags: #{text['tags'].join(', ')}" 
+  else
+    puts rand_bite(TAGS)
+  end
+else
+  puts gibberish(dict_depth: 2, num_sentences: 3) + "\n\n"
+end
