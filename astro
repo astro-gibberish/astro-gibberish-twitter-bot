@@ -16,7 +16,7 @@ PRETTY = true if ARGV.include? 'pretty' || PRETTY = false
 TAGS = (ARGV.delete_if{|i|i=='pretty'}).join(",")
 GIBB = true if ARGV.include? 'gibberish' || GIBB = false
 
-def gibberish(dict_depth: 2, num_sentences: 3)
+def gibberish(dict_depth: 2, num_sentences: 1)
   text = ""
   bites = n_bites()
   samples = pad_markov_chain()
