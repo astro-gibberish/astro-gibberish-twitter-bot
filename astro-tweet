@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+# 
+# astro-tweet
+# 
+# Tweets the funny output from `astro gibberish`.
+
+require 'twitter'
+require "open3"
+
+
+
+auth_file = open('/etc/astro-bot/twitter-api.keys', 'r').readlines
+client = Twitter::REST::Client.new do |config|
+  config.consumer_key        = auth_file[0].strip
+  config.consumer_secret     = auth_file[1].strip
+  config.access_token        = auth_file[2].strip
+  config.access_token_secret = auth_file[3].strip
+end
+
+gibb = ""
+Open3.popen3("astro", "gibberish") { |i, o| gibb = o.read }
+
+client.update(gibb) if gibb.length <= 140
