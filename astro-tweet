@@ -20,7 +20,7 @@ end
 def gibberish
   gibb = ""
   Open3.popen3("astro", "gibberish"){ |i, o| gibb = o.read }
-  return gibb
+  return gibb.force_encoding('UTF-8')
 end
 
 def tweet(text)
