@@ -38,16 +38,18 @@ def pad_markov_chain()
                       "transportation"]
   wired_categories.each do |cat|
     XmlSimple.xml_in(
-      Unirest.get( "http://www.wired.com/category/#{cat}/feed/").body.encode(Encoding::UTF_8)
+      Unirest.get( "http://www.wired.com/category/#{cat}/feed/").body.force_encoding('UTF-8')
     )["channel"][0]["item"].each do |item|
       item["title"].each do |title|
         samples.push({"text" => title})
       end
     end
   end
-  samples += Unirest.get(
+  q = Unirest.get(
     "https://raw.githubusercontent.com/fortrabbit/quotes/master/quotes.json"
   ).body
+  samples += q if q.class == Array
+  samples += [q] if q.class == String
   return samples
 end
 
