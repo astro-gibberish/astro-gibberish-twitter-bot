@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+#encoding: utf-8
 # This is a script that simply gets a random bit of information about astronomy
 # There are a few args you can pass from cmd line:
 #   - "pretty" > if you use pretty, you'll get text. By default you'll get the json
@@ -15,7 +16,7 @@ PRETTY = true if ARGV.include? 'pretty' || PRETTY = false
 TAGS = (ARGV.delete_if{|i|i=='pretty'}).join(",")
 GIBB = true if ARGV.include? 'gibberish' || GIBB = false
 
-def gibberish(dict_depth: 2, num_sentences: 1)
+def gibberish(dict_depth: 2, num_sentences: 2)
   text = ""
   bites = n_bites()
   samples = pad_markov_chain()
