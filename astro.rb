@@ -40,7 +40,7 @@ def pad_markov_chain()
   return samples
 end
 
-def get_raw_text()
+def get_raw_text(count: nil)
   raw_text = []
   filepath = '/etc/astro-bot/extra_text/*.txt'
   Dir.glob(filepath) do |file|
@@ -48,7 +48,12 @@ def get_raw_text()
       raw_text.push({"text" => line})
     end
   end
-  return raw_text
+  unless count then
+    return raw_text
+  else
+    puts raw_text.sample(count).length
+    return raw_text.sample(count) 
+  end
 end
 
 def get_fortrabbit_quotes()
@@ -89,13 +94,15 @@ def n_bites()
   return bites
 end
 
-unless defined?(GIBB) then
-  if defined?(PRETTY)
-    text = rand_bite(TAGS)
-    puts "#{text['name']}\n\nTags: #{text['tags'].join(', ')}" 
+if __FILE__ == $0 then
+  unless defined?(GIBB) then
+    if defined?(PRETTY)
+      text = rand_bite(TAGS)
+      puts "#{text['name']}\n\nTags: #{text['tags'].join(', ')}" 
+    else
+      puts rand_bite(TAGS)
+    end
   else
-    puts rand_bite(TAGS)
+    puts gibberish(dict_depth: 2, num_sentences: 3) + "\n\n"
   end
-else
-  puts gibberish(dict_depth: 2, num_sentences: 3) + "\n\n"
 end

@@ -3,6 +3,7 @@ GEM
   specs:
     addressable (2.3.8)
     buftok (0.2.0)
+    diff-lcs (1.2.5)
     domain_name (0.5.20160216)
       unf (>= 0.0.5, < 1.0.0)
     equalizer (0.0.10)
@@ -28,6 +29,19 @@ GEM
     naught (1.1.0)
     rest-client (1.6.9)
       mime-types (~> 1.16)
+    rspec (3.4.0)
+      rspec-core (~> 3.4.0)
+      rspec-expectations (~> 3.4.0)
+      rspec-mocks (~> 3.4.0)
+    rspec-core (3.4.3)
+      rspec-support (~> 3.4.0)
+    rspec-expectations (3.4.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.4.0)
+    rspec-mocks (3.4.1)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.4.0)
+    rspec-support (3.4.1)
     simple_oauth (0.3.1)
     thread_safe (0.3.5)
     twitter (5.16.0)
@@ -55,6 +69,7 @@ PLATFORMS
 
 DEPENDENCIES
   marky_markov
+  rspec
   twitter
   unirest
   xml-simple
