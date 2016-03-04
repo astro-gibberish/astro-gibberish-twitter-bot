@@ -25,23 +25,25 @@ def gibberish(dict_depth: 2, num_sentences: 2)
   samples.each do |q|
     text += q["text"] + '. '
   end
+  abort("No source text found") if samples.empty?
   markov = MarkyMarkov::TemporaryDictionary.new(dict_depth)
   markov.parse_string(text)
-  return  markov.generate_n_sentences num_sentences
+  return  markov.generate_n_sentences num_sentences 
 end
 
 def pad_markov_chain()
   # Some sentences to pad the markov chain dictionary with
   samples = [] 
+  samples += get_raw_text()
   samples += get_wired()
   samples += get_fortrabbit_quotes()
-  samples += get_raw_text()
   return samples
 end
 
 def get_raw_text()
   raw_text = []
-  Dir.foreach('/etc/astro-bot/extra_text/*.txt') do |file|
+  filepath = '/etc/astro-bot/extra_text/*.txt'
+  Dir.glob(filepath) do |file|
     open(file, 'r').readlines.each do |line|
       raw_text.push({"text" => line})
     end
