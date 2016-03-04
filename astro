@@ -42,8 +42,8 @@ def get_fortrabbit_quotes()
   q = Unirest.get(
     "https://raw.githubusercontent.com/fortrabbit/quotes/master/quotes.json"
   ).body
-  samples += q if q.class == Array
-  samples += [q] if q.class == String
+  samples = q if q.class == Array
+  samples = [q] if q.class == String
   return samples
 end
 
