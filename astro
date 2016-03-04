@@ -33,6 +33,22 @@ end
 def pad_markov_chain()
   # Some sentences to pad the markov chain dictionary with
   samples = [] 
+  samples += get_wired()
+  samples += get_fortrabbit_quotes()
+  return samples
+end
+
+def get_fortrabbit_quotes()
+  q = Unirest.get(
+    "https://raw.githubusercontent.com/fortrabbit/quotes/master/quotes.json"
+  ).body
+  samples += q if q.class == Array
+  samples += [q] if q.class == String
+  return samples
+end
+
+def get_wired()
+  samples = []
   wired_categories = ["gear", "science", "business", "design", "underwire", 
                       "reviews", "science-blogs", "threatlevel", "culture", 
                       "transportation"]
@@ -45,11 +61,6 @@ def pad_markov_chain()
       end
     end
   end
-  q = Unirest.get(
-    "https://raw.githubusercontent.com/fortrabbit/quotes/master/quotes.json"
-  ).body
-  samples += q if q.class == Array
-  samples += [q] if q.class == String
   return samples
 end
 
