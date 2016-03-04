@@ -35,7 +35,18 @@ def pad_markov_chain()
   samples = [] 
   samples += get_wired()
   samples += get_fortrabbit_quotes()
+  samples += get_raw_text()
   return samples
+end
+
+def get_raw_text()
+  raw_text = []
+  Dir.foreach('/etc/astro-bot/extra_text/*.txt') do |file|
+    open(file, 'r').readlines.each do |line|
+      raw_text.push({"text" => line})
+    end
+  end
+  return raw_text
 end
 
 def get_fortrabbit_quotes()
