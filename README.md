@@ -16,29 +16,29 @@ git clone https://github.com/astro-gibberish/astro-gibberish-twitter-bot.git
 cd astro-gibberish-twitter-bot
 gem install bundler
 bundle install
-./astro gibberish
+./astro.rb gibberish
 ```
 
 ### More about the astronomy Facts Script
 
 This simple ruby script gives astronomy facts.
 
-Move to /usr/local/bin to call `astro` as a command!
+Move to /usr/local/bin and symlink to call `astro` as a command!
 
 Arguments available:
-  - Basic example: `astro pretty` gives output in text/paragraph output
-  - Tag example: `astro sun moon` will use 'sun' and 'moon' as tags to search the api.
-  - Since pretty is an argument, `astro pretty sun moon` will work as well.
+  - Basic example: `astro.rb pretty` gives output in text/paragraph output
+  - Tag example: `astro.rb sun moon` will use 'sun' and 'moon' as tags to search the api.
+  - Since pretty is an argument, `astro.rb pretty sun moon` will work as well.
 
 Basic use:
 ```
-$ astro
+$ astro.rb
 {"name"=>"If we stood on the moon we would see stars during the day because the moon has no atmosphere", "tags"=>["moon", "star", "fact", "atmosphere"], "_id"=>"5239ad8606dc90bc0200000a"}
 ```
 
 Use with pretty and tags:
 ```
-$ astro pretty star helium
+$ astro.rb pretty star helium
 All chemical elements, except for mainly Hydrogen and Helium, were produced inside stars
 
 Tags: star, fact, hydrogen, helium
