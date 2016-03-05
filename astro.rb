@@ -6,14 +6,14 @@
 #     - Multiple tags are an "AND" search, not "OR".
 # Unirest is used for http requests: http://unirest.io/ruby.html
 # Astrocast is used for the information: http://astrocast.org/index.php
-
 require 'unirest'
 require 'marky_markov'
 require 'xmlsimple'
 
-PRETTY = true if ARGV.include? 'pretty' || PRETTY = false
-TAGS = (ARGV.delete_if{|i|i=='pretty'}).join(",")
-GIBB = true if ARGV.include? 'gibberish' || GIBB = false
+@pretty = true if ARGV.include? 'pretty' || @pretty = false
+@tags = (ARGV.delete_if{|i|i=='pretty'}).join(",")
+@gibberish = true if ARGV.include? 'gibberish' || @gibberish = false
+@verbose = true if ARGV.include? '-v' || @verbose = false
 
 def gibberish(dict_depth: 2, num_sentences: 2)
   text = ""
@@ -35,7 +35,7 @@ def pad_markov_chain()
   # Some sentences to pad the markov chain dictionary with
   samples = [] 
   samples += get_raw_text()
-  samples += get_wired()
+ # samples += get_wired()
   samples += get_fortrabbit_quotes()
   return samples
 end
@@ -43,6 +43,7 @@ end
 def get_raw_text(count: nil)
   raw_text = []
   filepath = '/etc/astro-bot/extra_text/*.txt'
+  puts "Getting extra text from disk" if @verbose
   Dir.glob(filepath) do |file|
     open(file, 'r').readlines.each do |line|
       raw_text.push({"text" => line})
@@ -51,15 +52,15 @@ def get_raw_text(count: nil)
   unless count then
     return raw_text
   else
-    puts raw_text.sample(count).length
+    puts raw_text.sample(count).length if @verbose
     return raw_text.sample(count) 
   end
 end
 
 def get_fortrabbit_quotes()
-  q = Unirest.get(
-    "https://raw.githubusercontent.com/fortrabbit/quotes/master/quotes.json"
-  ).body
+  quotes_url = "https://raw.githubusercontent.com/fortrabbit/quotes/master/quotes.json"
+  puts "Getting quotes from #{quotes_url}" if @verbose
+  q = Unirest.get(quotes_url).body
   samples = q if q.class == Array
   samples = [q] if q.class == String
   return samples
@@ -90,17 +91,19 @@ def rand_bite(tags)
 end
 
 def n_bites()
-  bites = Unirest.get("http://astrocast.herokuapp.com/bites").body
+  astrocast = "http://astrocast.herokuapp.com/bites"
+  puts "Getting bites from #{astrocast}" if @verbose
+  bites = Unirest.get(astrocast).body
   return bites
 end
 
 if __FILE__ == $0 then
-  unless defined?(GIBB) then
-    if defined?(PRETTY)
-      text = rand_bite(TAGS)
+  unless defined?(@gibberish) then
+    if defined?(@pretty)
+      text = rand_bite(@tags)
       puts "#{text['name']}\n\nTags: #{text['tags'].join(', ')}" 
     else
-      puts rand_bite(TAGS)
+      puts rand_bite(@tags)
     end
   else
     puts gibberish(dict_depth: 2, num_sentences: 3) + "\n\n"
